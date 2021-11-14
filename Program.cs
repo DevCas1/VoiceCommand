@@ -9,8 +9,9 @@ namespace VoiceCommand
     {
         private static void Main(string[] args) // Add (string[] args) to use command line arguments when starting the program
         {
+            SpeechRecognitionEngine speechRecognitionEngine = new SpeechRecognitionEngine();
             SpeechRecognizer recognizer = new SpeechRecognizer();
-            recognizer.SpeechRecognized += OnSpeechRecognized;
+            //recognizer.SpeechRecognized += OnSpeechRecognized;
 
             SrgsRule moduleRule = new SrgsRule("moduleList");
 
