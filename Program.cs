@@ -15,23 +15,10 @@ namespace VoiceCommand
             Completed = new ManualResetEvent(false);
 
             SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
+
             recognitionEngine.LoadGrammarCompleted += (object o, LoadGrammarCompletedEventArgs a) => { Console.WriteLine("Grammars loaded."); };
             recognitionEngine.SpeechRecognized += OnSpeechRecognized;
             recognitionEngine.SpeechRecognitionRejected += OnSpeechRecognitionRejected;
-
-            //SrgsRule moduleRule = new SrgsRule("moduleList");
-
-            //SrgsOneOf modules = new SrgsOneOf(new string[] { "engine", "weapon", "shield"});
-            //moduleRule.Add(modules);
-            //moduleRule.Scope = SrgsRuleScope.Public;
-
-            //SrgsDocument document = new SrgsDocument();
-            //document.Rules.Add(moduleRule);
-            //document.Root = moduleRule;
-
-            //SrgsItem[] optionalItems = { new SrgsItem(0, 1, "the"), new SrgsItem(0, 1, "the") };
-            //SrgsItem mandatoryItem = new SrgsItem(1, 1, "power");
-            //SrgsItem alternativeMandatoryItem = new SrgsItem(1, 1, "convert");
 
             recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder("test")));
             recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder("exit")));
