@@ -1,31 +1,22 @@
 ﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Speech.Recognition;
 using System.Speech.Recognition.SrgsGrammar;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace VoiceCommand
 {
     internal class Program
     {
-        internal class Command
-        {
-            public Command(string commandPhrase, string[] actions)
-            {
-                CommandPhrase = commandPhrase;
-                Actions = actions;
-            }
-
-            public readonly string CommandPhrase;
-            public readonly string[] Actions;
-        }
-
         private static ManualResetEvent Completed = null;
         private static string ShutdownWord = "Close Voice Command";
+        private static Command[] LoadedCommands = null;
 
         private static void Main(string[] args) // Add (string[] args) to use command line arguments when starting the program
         {
             LogToConsole("Initializing...");
+
             Completed = new ManualResetEvent(false);
 
             SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
@@ -33,13 +24,8 @@ namespace VoiceCommand
             recognitionEngine.LoadGrammarCompleted += (object o, LoadGrammarCompletedEventArgs a) => { Console.WriteLine("Grammars loaded."); };
             recognitionEngine.SpeechRecognized += OnSpeechRecognized;
             recognitionEngine.SpeechRecognitionRejected += OnSpeechRecognitionRejected;
-            //grammarBuilder.Culture = new System.Globalization.CultureInfo("en-GB"); gr = new Grammar(grammarBuilder);
 
-            AddGrammars(recognitionEngine, LoadCommands());
-
-            //recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder("maximize shields"))); // Special setup
-            //recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder("maximize shields"))); // Special setup
-            //recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder("maximize shields"))); // Special setup
+            AddGrammars(recognitionEngine, LoadedCommands = LoadCommands());
 
             recognitionEngine.SetInputToDefaultAudioDevice(); // set the input of the speech recognizer to the default audio device
             recognitionEngine.RecognizeAsync(RecognizeMode.Multiple); // recognize speech asynchronous
@@ -48,15 +34,12 @@ namespace VoiceCommand
             Completed.WaitOne(); // wait until speech recognition is completed
 
             recognitionEngine.Dispose(); // dispose the speech recognition engine
-
-            //Console.ReadLine();
         }
 
         private static Command[] LoadCommands() //TODO: Replace with JSON parser
         {
             Command[] commands = new Command[]
             {
-                new Command(ShutdownWord, new string[]{""}),
                 new Command("power the engines", new string[]{""}),
                 new Command("power the weapons", new string[]{""}),
                 new Command("power the shields", new string[]{""}),
@@ -70,7 +53,10 @@ namespace VoiceCommand
 
         private static void AddGrammars(SpeechRecognitionEngine recognitionEngine, Command[] commands)
         {
+            //new System.Globalization.CultureInfo("en-GB"); gr = new Grammar(grammarBuilder); // For SAPI errors regarding culture info
             LogToConsole("Loading commands...");
+            recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(ShutdownWord)));
+
             foreach (var command in commands)
                 recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(command.CommandPhrase)));
 
@@ -80,16 +66,38 @@ namespace VoiceCommand
         private static void LogToConsole(string message) => Console.WriteLine(DateTime.Now + ": " + message);
 
         private static void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs args)
-        {            
+        {
             if (args.Result.Text == ShutdownWord)
             {
-                LogToConsole("Shutdown word recognized, shutting down...");
-                Thread.Sleep(1000);
-                Completed.Set();
+                ShutDown();
                 return;
             }
 
-            LogToConsole($"Command recognized \"{args.Result.Text}\"");
+            Command recognizedCommand = null;
+            bool commandFound = false;
+
+            for (int index = 0; index < LoadedCommands.Length; index++)
+            {
+                if (args.Result.Text == LoadedCommands[index].CommandPhrase)
+                {
+                    recognizedCommand = LoadedCommands[index];
+                    commandFound = true;
+                    break;
+                }
+            }
+
+            if (commandFound)
+            {
+
+                LogToConsole($"Command recognized \"{recognizedCommand.CommandPhrase}\"");
+            }
+        }
+
+        private static void ShutDown()
+        {
+            LogToConsole("Shutdown word recognized, shutting down...");
+            Thread.Sleep(1000);
+            Completed.Set();
         }
 
         private static void OnSpeechRecognitionRejected(object sender, SpeechRecognitionRejectedEventArgs args) => LogToConsole("Still listening...");
