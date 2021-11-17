@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Speech.Recognition;
-using System.Speech.Recognition.SrgsGrammar;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
+//using 
 
 namespace VoiceCommand
 {
@@ -12,12 +11,14 @@ namespace VoiceCommand
         private static ManualResetEvent Completed = null;
         private static string ShutdownWord = "Close Voice Command";
         private static Command[] LoadedCommands = null;
+        //private static Robot Robot;
 
         private static void Main(string[] args) // Add (string[] args) to use command line arguments when starting the program
         {
             LogToConsole("Initializing...");
 
             Completed = new ManualResetEvent(false);
+            //Robot = new Robot();
 
             SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
 
@@ -40,6 +41,7 @@ namespace VoiceCommand
         {
             Command[] commands = new Command[]
             {
+                new Command("test", new string[]{""}),
                 new Command("power the engines", new string[]{""}),
                 new Command("power the weapons", new string[]{""}),
                 new Command("power the shields", new string[]{""}),
@@ -73,7 +75,7 @@ namespace VoiceCommand
                 return;
             }
 
-            Command recognizedCommand = null;
+            Command recognizedCommand = new Command();
             bool commandFound = false;
 
             for (int index = 0; index < LoadedCommands.Length; index++)
@@ -86,10 +88,10 @@ namespace VoiceCommand
                 }
             }
 
-            if (commandFound)
+            if (commandFound) // Only use recognizedCommand when a command has actually been recognized.
             {
-
                 LogToConsole($"Command recognized \"{recognizedCommand.CommandPhrase}\"");
+                
             }
         }
 

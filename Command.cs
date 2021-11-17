@@ -1,6 +1,6 @@
 ﻿namespace VoiceCommand
 {
-    internal class Command
+    internal struct Command
     {
         public Command(string commandPhrase, string[] actions)
         {

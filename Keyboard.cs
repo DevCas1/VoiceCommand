@@ -5,33 +5,29 @@ namespace VoiceCommand
 {
     public class Keyboard
     {
-        public void Send(ScanCodeShort a)
+        public void Send(ScanCodeShort scanCode)
         {
-            INPUT[] Inputs = new INPUT[1];
-            INPUT Input = new INPUT();
-            Input.type = 1; // 1 = Keyboard Input
-            Input.U.ki.wScan = a;
-            Input.U.ki.dwFlags = KEYEVENTF.SCANCODE;
-            Inputs[0] = Input;
-            SendInput(1, Inputs, INPUT.Size);
+            INPUT[] inputs = new INPUT[1];
+            INPUT input = new INPUT();
+            input.type = 1; // 1 = Keyboard Input
+            input.inputUnion.keyboardInput.scanCodeShort = scanCode;
+            input.inputUnion.keyboardInput.dwFlags = KEYEVENTF.SCANCODE;
+            inputs[0] = input;
+            SendInput(1, inputs, INPUT.Size);
         }
 
         /// <summary>
         /// Declaration of external SendInput method
         /// </summary>
         [DllImport("user32.dll")]
-        internal static extern uint SendInput(
-            uint nInputs,
-            [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs,
-            int cbSize);
-
+        internal static extern uint SendInput(uint inputCount, INPUT[] pInputs, int cbSize);
 
         // Declare the INPUT struct
         [StructLayout(LayoutKind.Sequential)]
         public struct INPUT
         {
             public uint type;
-            public InputUnion U;
+            public InputUnion inputUnion;
             public static int Size
             {
                 get { return Marshal.SizeOf(typeof(INPUT)); }
@@ -43,18 +39,18 @@ namespace VoiceCommand
         public struct InputUnion
         {
             [FieldOffset(0)]
-            internal MOUSEINPUT mi;
+            internal MOUSEINPUT mouseInput;
             [FieldOffset(0)]
-            internal KEYBDINPUT ki;
+            internal KEYBDINPUT keyboardInput;
             [FieldOffset(0)]
-            internal HARDWAREINPUT hi;
+            internal HARDWAREINPUT hardwareInput;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct MOUSEINPUT
         {
-            internal int dx;
-            internal int dy;
+            internal int deltaX;
+            internal int deltaY;
             internal MouseEventDataXButtons mouseData;
             internal MOUSEEVENTF dwFlags;
             internal uint time;
@@ -91,8 +87,8 @@ namespace VoiceCommand
         [StructLayout(LayoutKind.Sequential)]
         public struct KEYBDINPUT
         {
-            internal VirtualKeyShort wVk;
-            internal ScanCodeShort wScan;
+            internal VirtualKeyShort virtualKeyShort;
+            internal ScanCodeShort scanCodeShort;
             internal KEYEVENTF dwFlags;
             internal int time;
             internal UIntPtr dwExtraInfo;
@@ -112,11 +108,11 @@ namespace VoiceCommand
             ///<summary>
             ///Left mouse button
             ///</summary>
-            LMBUTTON = 0x01,
+            LBUTTON = 0x01,
             ///<summary>
             ///Right mouse button
             ///</summary>
-            RMBUTTON = 0x02,
+            RBUTTON = 0x02,
             ///<summary>
             ///Control-break processing
             ///</summary>
@@ -124,7 +120,7 @@ namespace VoiceCommand
             ///<summary>
             ///Middle mouse button (three-button mouse)
             ///</summary>
-            MMBUTTON = 0x04,
+            MBUTTON = 0x04,
             ///<summary>
             ///Windows 2000/XP: X1 mouse button
             ///</summary>
