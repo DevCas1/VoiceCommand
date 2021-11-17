@@ -2,8 +2,8 @@
 using System.Speech.Recognition;
 using System.Threading;
 using System.Threading.Tasks;
-using Desktop.Robot;
-using Desktop.Robot.Extensions;
+using System.Runtime.InteropServices;
+using Input = VoiceCommand.Keyboard.Input;
 
 namespace VoiceCommand
 {
@@ -12,7 +12,6 @@ namespace VoiceCommand
         private static ManualResetEvent Completed = null;
         private static string ShutdownWord = "Close Voice Command";
         private static Command[] LoadedCommands = null;
-        //private static Robot Robot;
 
         private static void Main(string[] args) // Add (string[] args) to use command line arguments when starting the program
         {
@@ -92,8 +91,32 @@ namespace VoiceCommand
             if (commandFound) // Only use recognizedCommand when a command has actually been recognized.
             {
                 LogToConsole($"Command recognized \"{recognizedCommand.CommandPhrase}\"");
-                
+                var inputs = GetTestInput();
+                Keyboard.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(Input)));
             }
+        }
+
+        private static Input[] GetTestInput() // THIS WORKS, GENERATES A MEASLY 'w' EVERY TIME!
+        {
+            Input[] inputs = new Input[]
+            {
+                new Input
+                {
+                    type = (int)Keyboard.InputType.Keyboard,
+                    u = new Keyboard.InputUnion
+                    {
+                        ki = new Keyboard.KeyboardInput
+                        {
+                            wVk = 0,
+                            wScan = 0x11, // W-button
+                            dwFlags = (uint)(Keyboard.KeyEventF.KeyDown | Keyboard.KeyEventF.Scancode),
+                            dwExtraInfo = Keyboard.GetMessageExtraInfo()
+                        }
+                    }
+                }
+            };
+
+            return inputs;
         }
 
         private static void ShutDown()
