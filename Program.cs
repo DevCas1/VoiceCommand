@@ -12,13 +12,14 @@ namespace VoiceCommand
         private static ManualResetEvent Completed = null;
         private static string ShutdownWord = "Close Voice Command";
         private static Command[] LoadedCommands = null;
+        private static Keyboard Keyboard;
 
         private static void Main(string[] args) // Add (string[] args) to use command line arguments when starting the program
         {
             LogToConsole("Initializing...");
 
             Completed = new ManualResetEvent(false);
-            //Robot = new Robot();
+            Keyboard = new Keyboard();
 
             SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
 
@@ -108,7 +109,41 @@ namespace VoiceCommand
                         ki = new Keyboard.KeyboardInput
                         {
                             wVk = 0,
-                            wScan = 0x11, // W-button
+                            //wScan = 0x11, // w-button
+                            //wScan = 0x14, // t-button
+                            wScan = Keyboard.GetScancode(Keyboard.Scancode.sc_h),
+                            dwFlags = (uint)(Keyboard.KeyEventF.KeyDown | Keyboard.KeyEventF.Scancode),
+                            dwExtraInfo = Keyboard.GetMessageExtraInfo()
+                        }
+                    }
+                },
+                new Input
+                {
+                    type = (int)Keyboard.InputType.Keyboard,
+                    u = new Keyboard.InputUnion
+                    {
+                        ki = new Keyboard.KeyboardInput
+                        {
+                            wVk = 0,
+                            //wScan = 0x11, // w-button
+                            //wScan = 0x14, // t-button
+                            wScan = Keyboard.GetScancode(Keyboard.Scancode.sc_o),
+                            dwFlags = (uint)(Keyboard.KeyEventF.KeyDown | Keyboard.KeyEventF.Scancode),
+                            dwExtraInfo = Keyboard.GetMessageExtraInfo()
+                        }
+                    }
+                },
+                new Input
+                {
+                    type = (int)Keyboard.InputType.Keyboard,
+                    u = new Keyboard.InputUnion
+                    {
+                        ki = new Keyboard.KeyboardInput
+                        {
+                            wVk = 0,
+                            //wScan = 0x11, // w-button
+                            //wScan = 0x14, // t-button
+                            wScan = Keyboard.GetScancode(Keyboard.Scancode.sc_i),
                             dwFlags = (uint)(Keyboard.KeyEventF.KeyDown | Keyboard.KeyEventF.Scancode),
                             dwExtraInfo = Keyboard.GetMessageExtraInfo()
                         }
