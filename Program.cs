@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Speech.Recognition;
 using System.Threading;
-using System.Threading.Tasks;
-using Scancode = VoiceCommand.Keyboard.Scancode;
+using VoiceCommand.Input;
+using Scancode = VoiceCommand.Input.Scancode;
 
 namespace VoiceCommand
 {
@@ -11,14 +11,12 @@ namespace VoiceCommand
         private static ManualResetEvent Completed = null;
         private static string ShutdownWord = "Close Voice Command";
         private static Command[] LoadedCommands = null;
-        private static Keyboard Keyboard;
 
         private static void Main(string[] args) // Add (string[] args) to use command line arguments when starting the program
         {
             LogToConsole("Initializing...");
 
             Completed = new ManualResetEvent(false);
-            Keyboard = new Keyboard();
 
             SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
 
@@ -33,7 +31,6 @@ namespace VoiceCommand
             LogToConsole("Ready!");
 
             Completed.WaitOne(); // wait until speech recognition is completed
-
             recognitionEngine.Dispose(); // dispose the speech recognition engine
         }
 
@@ -42,9 +39,9 @@ namespace VoiceCommand
             Command[] commands = new Command[]
             {
                 new Command("test", new Scancode[]{ Scancode.sc_h, Scancode.sc_o, Scancode.sc_i }),
-                //new Command("power the engines", new string[]{""}),
-                //new Command("power the weapons", new string[]{""}),
-                //new Command("power the shields", new string[]{""}),
+                new Command("power the engines", new Scancode[]{ Scancode.sc_1 }),
+                new Command("power the weapons", new Scancode[]{ Scancode.sc_2 }),
+                new Command("power the shields", new Scancode[]{ Scancode.sc_3 }),
                 //new Command("maximize engines", new string[]{""}),
                 //new Command("maximize weapons", new string[]{""}),
                 //new Command("maximize shields", new string[]{""})

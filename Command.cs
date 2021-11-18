@@ -1,14 +1,16 @@
-﻿namespace VoiceCommand
+﻿using VoiceCommand.Input;
+
+namespace VoiceCommand
 {
     internal struct Command
     {
-        public Command(string commandPhrase, Keyboard.Scancode[] inputs)
+        public Command(string commandPhrase, Scancode[] inputs)
         {
             CommandPhrase = commandPhrase;
             Inputs = inputs;
         }
 
         public readonly string CommandPhrase;
-        public readonly Keyboard.Scancode[] Inputs;
+        public readonly Scancode[] Inputs;
     }
 }
