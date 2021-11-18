@@ -2,8 +2,7 @@
 using System.Speech.Recognition;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Runtime.InteropServices;
-using Input = VoiceCommand.Keyboard.Input;
+using Scancode = VoiceCommand.Keyboard.Scancode;
 
 namespace VoiceCommand
 {
@@ -42,13 +41,13 @@ namespace VoiceCommand
         {
             Command[] commands = new Command[]
             {
-                new Command("test", new string[]{""}),
-                new Command("power the engines", new string[]{""}),
-                new Command("power the weapons", new string[]{""}),
-                new Command("power the shields", new string[]{""}),
-                new Command("maximize engines", new string[]{""}),
-                new Command("maximize weapons", new string[]{""}),
-                new Command("maximize shields", new string[]{""})
+                new Command("test", new Scancode[]{ Scancode.sc_h, Scancode.sc_o, Scancode.sc_i }),
+                //new Command("power the engines", new string[]{""}),
+                //new Command("power the weapons", new string[]{""}),
+                //new Command("power the shields", new string[]{""}),
+                //new Command("maximize engines", new string[]{""}),
+                //new Command("maximize weapons", new string[]{""}),
+                //new Command("maximize shields", new string[]{""})
             };
 
             return commands;
@@ -70,7 +69,9 @@ namespace VoiceCommand
 
         private static void OnSpeechRecognized(object sender, SpeechRecognizedEventArgs args)
         {
-            if (args.Result.Text == ShutdownWord)
+            string result = args.Result.Text;
+
+            if (result == ShutdownWord)
             {
                 ShutDown();
                 return;
@@ -79,84 +80,26 @@ namespace VoiceCommand
             Command recognizedCommand = new Command();
             bool commandFound = false;
 
-            for (int index = 0; index < LoadedCommands.Length; index++)
+            foreach (var command in LoadedCommands)
             {
-                if (args.Result.Text == LoadedCommands[index].CommandPhrase)
+                if (command.CommandPhrase == result)
                 {
-                    recognizedCommand = LoadedCommands[index];
+                    recognizedCommand = command;
                     commandFound = true;
                     break;
                 }
             }
 
-            if (commandFound) // Only use recognizedCommand when a command has actually been recognized.
+            if (commandFound) // Only use recognizedCommand when a command has actually been recognized. Can't check for null on recognizedCommand because it's a (non-nullable) struct
             {
                 LogToConsole($"Command recognized \"{recognizedCommand.CommandPhrase}\"");
-                var inputs = GetTestInput();
-                Keyboard.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(Input)));
+                Keyboard.SendInputs(recognizedCommand.Inputs);
             }
-        }
-
-        private static Input[] GetTestInput() // THIS WORKS, GENERATES A MEASLY 'w' EVERY TIME!
-        {
-            Input[] inputs = new Input[]
-            {
-                new Input
-                {
-                    type = (int)Keyboard.InputType.Keyboard,
-                    u = new Keyboard.InputUnion
-                    {
-                        ki = new Keyboard.KeyboardInput
-                        {
-                            wVk = 0,
-                            //wScan = 0x11, // w-button
-                            //wScan = 0x14, // t-button
-                            wScan = Keyboard.GetScancode(Keyboard.Scancode.sc_h),
-                            dwFlags = (uint)(Keyboard.KeyEventF.KeyDown | Keyboard.KeyEventF.Scancode),
-                            dwExtraInfo = Keyboard.GetMessageExtraInfo()
-                        }
-                    }
-                },
-                new Input
-                {
-                    type = (int)Keyboard.InputType.Keyboard,
-                    u = new Keyboard.InputUnion
-                    {
-                        ki = new Keyboard.KeyboardInput
-                        {
-                            wVk = 0,
-                            //wScan = 0x11, // w-button
-                            //wScan = 0x14, // t-button
-                            wScan = Keyboard.GetScancode(Keyboard.Scancode.sc_o),
-                            dwFlags = (uint)(Keyboard.KeyEventF.KeyDown | Keyboard.KeyEventF.Scancode),
-                            dwExtraInfo = Keyboard.GetMessageExtraInfo()
-                        }
-                    }
-                },
-                new Input
-                {
-                    type = (int)Keyboard.InputType.Keyboard,
-                    u = new Keyboard.InputUnion
-                    {
-                        ki = new Keyboard.KeyboardInput
-                        {
-                            wVk = 0,
-                            //wScan = 0x11, // w-button
-                            //wScan = 0x14, // t-button
-                            wScan = Keyboard.GetScancode(Keyboard.Scancode.sc_i),
-                            dwFlags = (uint)(Keyboard.KeyEventF.KeyDown | Keyboard.KeyEventF.Scancode),
-                            dwExtraInfo = Keyboard.GetMessageExtraInfo()
-                        }
-                    }
-                }
-            };
-
-            return inputs;
         }
 
         private static void ShutDown()
         {
-            LogToConsole("Shutdown word recognized, shutting down...");
+            LogToConsole("Shutdown phrase recognized, shutting down...");
             Thread.Sleep(1000);
             Completed.Set();
         }

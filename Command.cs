@@ -2,13 +2,13 @@
 {
     internal struct Command
     {
-        public Command(string commandPhrase, string[] actions)
+        public Command(string commandPhrase, Keyboard.Scancode[] inputs)
         {
             CommandPhrase = commandPhrase;
-            Actions = actions;
+            Inputs = inputs;
         }
 
         public readonly string CommandPhrase;
-        public readonly string[] Actions;
+        public readonly Keyboard.Scancode[] Inputs;
     }
 }
