@@ -5,8 +5,6 @@ namespace VoiceCommand.Input
 {
     internal class Keyboard
     {
-        public static void SendInput(Scancode scancode, bool keyDown) => SendInput(1, new Input[] { GetKBInputDownFromScancode(scancode, keyDown) }, Marshal.SizeOf(typeof(Input)));
-
         public static void SendInputs(InputAction[] actions)
         {
             Input[] inputs = new Input[actions.Length];
