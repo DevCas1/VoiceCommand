@@ -7,13 +7,14 @@ namespace VoiceCommand.Input
     {
         public static void SendInput(Scancode scancode, bool keyDown) => SendInput(1, new Input[] { GetKBInputDownFromScancode(scancode, keyDown) }, Marshal.SizeOf(typeof(Input)));
 
-        public static void SendInputs(Scancode[] scancodes)
+        public static void SendInputs(InputAction[] actions)
         {
-            Input[] inputs = new Input[scancodes.Length];
+            Input[] inputs = new Input[actions.Length];
 
-            for (int index = 0; index < scancodes.Length; index++)
+            for (int index = 0; index < actions.Length; index++)
             {
-                inputs[index] = GetKBInputDownFromScancode(scancodes[index], true);
+                var action = actions[index];
+                inputs[index] = GetKBInputDownFromScancode(action.Scancode, action.KeyDown);
             }
 
             SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(Input)));

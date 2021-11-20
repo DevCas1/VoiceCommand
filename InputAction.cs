@@ -10,6 +10,13 @@
             Duration = duration;
         }
 
+        public InputAction(Scancode scancode, bool keyDown)
+        {
+            Scancode = scancode;
+            KeyDown = keyDown;
+            Duration = 0;
+        }
+
         public readonly Scancode Scancode;
         public readonly bool KeyDown;
         public readonly float Duration;
