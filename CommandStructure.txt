@@ -1,0 +1,13 @@
+﻿Command
+{
+	string CommandPhrase;
+	InputAction[]
+	{
+		InputAction
+		{
+			(enum)Scancode scanCode;
+			bool Keydown;
+			float Duration;
+		}
+	}
+}
