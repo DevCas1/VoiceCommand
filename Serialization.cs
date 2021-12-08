@@ -2,13 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text.Json;
-using System.Windows;
-using System.Windows.Input;
 
 namespace VoiceCommand.Serialization
 {
     internal class Serialization
     {
+        public bool IsInitialLaunch { get; private set; } = true;
+
         /// <summary>
         /// Load a list of predefined Commands from Json.
         /// </summary>
