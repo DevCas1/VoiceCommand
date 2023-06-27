@@ -43,40 +43,44 @@ namespace VoiceCommand
                     new InputAction(Scancode.sc_shiftLeft, true),
                     new InputAction(Scancode.sc_h, true), new InputAction(Scancode.sc_h, false),
                     new InputAction(Scancode.sc_shiftLeft, false),
-                    new InputAction(Scancode.sc_o, true), new InputAction(Scancode.sc_o, false),
+                    new InputAction(Scancode.sc_a, true), new InputAction(Scancode.sc_o, false),
+                    new InputAction(Scancode.sc_g, true), new InputAction(Scancode.sc_i, false),
+                    new InputAction(Scancode.sc_o, true), new InputAction(Scancode.sc_i, false),
+                    new InputAction(Scancode.sc_e, true), new InputAction(Scancode.sc_i, false),
                     new InputAction(Scancode.sc_i, true), new InputAction(Scancode.sc_i, false),
+                    new InputAction(Scancode.sc_e, true), new InputAction(Scancode.sc_i, false),
                 }),       
                 
-                new Command("power the engines", new InputAction[]
+                new Command("power engines", new InputAction[]
                 { 
                     new InputAction(Scancode.sc_1, true), new InputAction(Scancode.sc_1, false),
                 }),        
                 
-                new Command("power the weapons", new InputAction[]
+                new Command("power weapons", new InputAction[]
                 { 
                     new InputAction(Scancode.sc_2, true), new InputAction(Scancode.sc_2, false),
                 }),        
                 
-                new Command("power the shields", new InputAction[]
+                new Command("power shields", new InputAction[]
                 { 
                     new InputAction(Scancode.sc_3, true), new InputAction(Scancode.sc_3, false),
                 }),
 
-                new Command("maximize the engines", new InputAction[]
+                new Command("maximize engines", new InputAction[]
                 {
                     new InputAction(Scancode.sc_controlLeft, true),
                     new InputAction(Scancode.sc_1, true), new InputAction(Scancode.sc_1, false),
                     new InputAction(Scancode.sc_controlLeft, false)
                 }),
 
-                new Command("maximize the weapons", new InputAction[]
+                new Command("maximize weapons", new InputAction[]
                 {
                     new InputAction(Scancode.sc_controlLeft, true),
                     new InputAction(Scancode.sc_2, true), new InputAction(Scancode.sc_2, false),
                     new InputAction(Scancode.sc_controlLeft, false)
                 }),
 
-                new Command("maximize the shields", new InputAction[]
+                new Command("maximize shields", new InputAction[]
                 {
                     new InputAction(Scancode.sc_controlLeft, true),
                     new InputAction(Scancode.sc_3, true), new InputAction(Scancode.sc_3, false),
