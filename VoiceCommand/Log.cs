@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace VoiceCommand
+﻿namespace VoiceCommand
 {
     public static class Log
     {

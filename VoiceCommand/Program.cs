@@ -4,7 +4,7 @@ using System.Threading;
 using VoiceCommand.Input;
 using Scancode = VoiceCommand.Input.Scancode;
 
-namespace VoiceCommand
+namespace VoiceCommandHagoeie
 {
     internal class Program
     {
