@@ -1,0 +1,65 @@
+{
+    "Version": "1",
+	"Applications": 
+    [
+        {
+            "Name": "Application 1",
+            "CommandSets": 
+            [
+                {
+                    "Name": "Command Set 1",
+                    "Commands": 
+                    [
+                        {
+                            "Name": "Test 1-1",
+                            "CommandPhrase": "Test",
+                            "InputActions":
+                            [
+                                {
+                                    "ScanCode": "sc_t",
+                                    "KeyDown": "true",
+                                    "Duration": "0"
+                                },
+                                {
+                                    "ScanCode": "sc_t",
+                                    "KeyDown": "false",
+                                    "Duration": "0"
+                                },
+                                {
+                                    "ScanCode": "sc_e",
+                                    "KeyDown": "true",
+                                    "Duration": "0"
+                                },
+                                {
+                                    "ScanCode": "sc_e",
+                                    "KeyDown": "false",
+                                    "Duration": "0"
+                                },
+                                {
+                                    "ScanCode": "sc_s",
+                                    "KeyDown": "true",
+                                    "Duration": "0"
+                                },
+                                {
+                                    "ScanCode": "sc_s",
+                                    "KeyDown": "false",
+                                    "Duration": "0"
+                                },
+                                {
+                                    "ScanCode": "sc_t",
+                                    "KeyDown": "true",
+                                    "Duration": "0"
+                                },
+                                {
+                                    "ScanCode": "sc_t",
+                                    "KeyDown": "false",
+                                    "Duration": "0"
+                                }
+                            ]                      
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
