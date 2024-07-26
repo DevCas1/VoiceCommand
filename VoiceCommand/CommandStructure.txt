@@ -5,8 +5,14 @@
 	{
 		InputAction
 		{
-			(enum)Scancode scanCode;
-			bool Keydown;
+			(enum)Scancode ScanCode;
+			bool KeyDown;
+			float Duration;
+		},
+		InputAction
+		{
+			(enum)Scancode ScanCode;
+			bool KeyDown;
 			float Duration;
 		}
 	}
