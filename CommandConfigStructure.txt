@@ -1,0 +1,183 @@
+Config
+{
+    Version,
+	Applications
+    [
+        Application_1
+        {
+            CommandSets
+            [
+                Command_set_1
+                [
+                    Command_1
+                    {
+                    	string CommandPhrase;
+                    	InputAction[]
+                    	{
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		},
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		}
+                    	}
+                    },
+                    Command_2
+                    {
+                    	string CommandPhrase;
+                    	InputAction[]
+                    	{
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		},
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		}
+                    	}
+                    }
+                ],
+                Command_set_2
+                [
+                    Command_1
+                    {
+                    	string CommandPhrase;
+                    	InputAction[]
+                    	{
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		},
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		}
+                    	}
+                    },
+                    Command_2
+                    {
+                    	string CommandPhrase;
+                    	InputAction[]
+                    	{
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		},
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		}
+                    	}
+                    }
+                ]                
+            ]
+        },
+        Application_2
+        {
+            CommandSets
+            [
+                Command_set_1
+                [
+                    Command_1
+                    {
+                    	string CommandPhrase;
+                    	InputAction[]
+                    	{
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		},
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		}
+                    	}
+                    },
+                    Command_2
+                    {
+                    	string CommandPhrase;
+                    	InputAction[]
+                    	{
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		},
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		}
+                    	}
+                    }
+                ],
+                Command_set_2
+                [
+                    Command_1
+                    {
+                    	string CommandPhrase;
+                    	InputAction[]
+                    	{
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		},
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		}
+                    	}
+                    },
+                    Command_2
+                    {
+                    	string CommandPhrase;
+                    	InputAction[]
+                    	{
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		},
+                    		InputAction
+                    		{
+                    			(enum)Scancode ScanCode;
+                    			bool KeyDown;
+                    			float Duration;
+                    		}
+                    	}
+                    }
+                ]                
+            ]
+        }
+    ]
+}
