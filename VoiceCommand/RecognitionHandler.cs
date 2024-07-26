@@ -6,7 +6,7 @@ using Scancode = VoiceCommand.Input.ScanCode;
 
 namespace VoiceCommand;
 
-public class RecognitionHandler(string shutDownCommand = "Close Voice Command")
+public class RecognitionHandler(string shutDownCommand)
 {
     public readonly string ShutDownCommand = shutDownCommand;
     private ManualResetEvent? Completed = null;
