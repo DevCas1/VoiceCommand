@@ -5,20 +5,20 @@ namespace VoiceCommand.Input;
 
 internal class Keyboard
 {
-    public static void SendInputs(InputAction[] actions)
+    public static void SendInputs(InputAction[] inputActions)
     {
-        Input[] inputs = new Input[actions.Length];
+        Input[] inputs = new Input[inputActions.Length];
 
-        for (int index = 0; index < actions.Length; index++)
+        for (int index = 0; index < inputActions.Length; index++)
         {
-            var action = actions[index];
-            inputs[index] = GetKBInputDownFromScancode(action.Scancode, action.KeyDown);
+            var action = inputActions[index];
+            inputs[index] = GetKBInputFromScancode(action.Scancode, action.KeyDown);
         }
 
         SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(Input)));
     }
 
-    public static ushort ConvertToUInt(ScanCode code) => (ushort)code;
+    public static ushort ConvertScanCodeToUInt(ScanCode code) => (ushort)code;
 
     [DllImport("user32.dll", SetLastError = true)]
     private static extern uint SendInput(uint nInputs, Input[] pInputs, int cbSize);
@@ -26,7 +26,7 @@ internal class Keyboard
     [DllImport("user32.dll")]
     private static extern IntPtr GetMessageExtraInfo();
 
-    private static Input GetKBInputDownFromScancode(ScanCode scancode, bool keyDown) => new Input
+    private static Input GetKBInputFromScancode(ScanCode scanCode, bool keyDown) => new Input
     {
         type = (int)InputType.Keyboard,
         u = new InputUnion
@@ -34,7 +34,7 @@ internal class Keyboard
             ki = new KeyboardInput
             {
                 wVk = 0,
-                wScan = ConvertToUInt(scancode),
+                wScan = ConvertScanCodeToUInt(scanCode),
                 dwFlags = (uint)((keyDown ? KeyEventF.KeyDown : KeyEventF.KeyUp) | KeyEventF.Scancode),
                 dwExtraInfo = GetMessageExtraInfo()
             }

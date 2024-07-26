@@ -1,37 +1,28 @@
 namespace VoiceCommand.Input;
 
-internal struct InputSequence
+internal struct InputSequence(InputAction[] actions)
 {
-    public InputSequence(InputAction[] actions)
-    {
-        _actions = actions;
-        _currentActionIndex = 0;
-    }
-
-    public readonly bool HasFinished => _currentActionIndex >= _actions.Length;
-
+    public bool HasFinished { get; private set; }
     public readonly InputAction CurrentAction => _actions[_currentActionIndex];
+
+    private readonly InputAction[] _actions = actions;
+    private int _currentActionIndex = 0;
 
     public InputAction GetNextAction()
     {
         if (_currentActionIndex >= _actions.Length)
         {
-
+            HasFinished = true;
             Reset();
         }
 
-        InputAction current = CurrentAction;
-
         _currentActionIndex++;
 
-        return current;
+        return CurrentAction;
     }
 
     public void Reset()
     {
         _currentActionIndex = 0;
     }
-
-    private readonly InputAction[] _actions;
-    private int _currentActionIndex;
 }

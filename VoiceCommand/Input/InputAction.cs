@@ -1,23 +1,11 @@
 namespace VoiceCommand.Input;
 
 /// <summary>A collection of Keyboard Scancode and the duration for it to hold.</summary>
-public readonly struct InputAction
+public readonly struct InputAction(ScanCode scancode, bool keyDown, float duration)
 {
-    public InputAction(ScanCode scancode, bool keyDown, float duration)
-    {
-        Scancode = scancode;
-        KeyDown = keyDown;
-        Duration = duration;
-    }
+    public readonly bool KeyDown = keyDown;
+    public readonly float Duration = duration;
+    public readonly ScanCode Scancode = scancode;
 
-    public InputAction(ScanCode scancode, bool keyDown)
-    {
-        Scancode = scancode;
-        KeyDown = keyDown;
-        Duration = 0;
-    }
-
-    public readonly ScanCode Scancode;
-    public readonly bool KeyDown;
-    public readonly float Duration;
+    public InputAction(ScanCode scancode, bool keyDown) : this(scancode, keyDown, 0) { }
 }

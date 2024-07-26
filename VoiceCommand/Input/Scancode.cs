@@ -1,6 +1,6 @@
 namespace VoiceCommand.Input;
 
-public enum ScanCode
+public  enum ScanCode
 {
     escape = 0x01,
     sc_1 = 0x02,

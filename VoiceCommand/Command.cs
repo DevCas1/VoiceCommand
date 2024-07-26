@@ -2,15 +2,9 @@
 
 namespace VoiceCommand
 {
-    internal readonly struct Command
+    internal readonly struct Command(string commandPhrase, InputAction[] inputActions)
     {
-        public Command(string commandPhrase, InputAction[] inputActions)
-        {
-            CommandPhrase = commandPhrase;
-            InputActions = inputActions;
-        }
-
-        public readonly string CommandPhrase;
-        public readonly InputAction[] InputActions;
+        public readonly string CommandPhrase = commandPhrase;
+        public readonly InputAction[] InputActions = inputActions;
     }
 }
