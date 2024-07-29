@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace VoiceCommand.Input;
 
-internal class Keyboard
+internal static class Keyboard
 {
     public static void SendInputs(InputAction[] inputActions)
     {
@@ -17,14 +17,6 @@ internal class Keyboard
 
         SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(Input)));
     }
-
-    public static ushort ConvertScanCodeToUInt(ScanCode code) => (ushort)code;
-
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern uint SendInput(uint nInputs, Input[] pInputs, int cbSize);
-
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetMessageExtraInfo();
 
     private static Input GetKBInputFromScancode(ScanCode scanCode, bool keyDown) => new Input
     {
@@ -40,6 +32,14 @@ internal class Keyboard
             }
         }
     };
+
+    private static ushort ConvertScanCodeToUInt(ScanCode code) => (ushort)code;
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetMessageExtraInfo();
+
+    [DllImport("user32.dll", SetLastError = true)]
+    private static extern uint SendInput(uint nInputs, Input[] pInputs, int cbSize);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct KeyboardInput
