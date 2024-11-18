@@ -1,5 +1,6 @@
 {
     "Version": "1",
+    "Language": "en-GB",
 	"Applications": 
     [
         {
@@ -16,8 +17,18 @@
                             "InputActions":
                             [
                                 {
+                                    "ScanCode": "sc_shiftLeft",
+                                    "KeyDown": "true",
+                                    "Duration": "0"
+                                },
+                                {
                                     "ScanCode": "sc_t",
                                     "KeyDown": "true",
+                                    "Duration": "0"
+                                },
+                                {
+                                    "ScanCode": "sc_shiftLeft",
+                                    "KeyDown": "false",
                                     "Duration": "0"
                                 },
                                 {
