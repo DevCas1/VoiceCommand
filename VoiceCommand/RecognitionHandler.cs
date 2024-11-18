@@ -1,160 +1,154 @@
 using System.Speech.Recognition;
 using System.Threading;
 using VoiceCommand.Input;
+using Microsoft.Extensions.Configuration;
 
 using Scancode = VoiceCommand.Input.ScanCode;
+using System.Text.Json;
 
 namespace VoiceCommand;
 
-public class RecognitionHandler(string shutDownCommand)
+using Application = Input.Application;
+
+public class RecognitionHandler(VoiceCommandConfig config)
 {
-    public readonly string ShutDownCommand = shutDownCommand;
-    private ManualResetEvent? Completed = null;
-    private Command[]? LoadedCommands = null;
+    public bool ShouldStopRecognizing { get; private set; } = false;
+
+    private const string DEFAULT_QUIT_COMMAND = "Close Voice Command";
+    private const string DEFAULT_RELOAD_COMMAND = "Reload all Commands";
+
+    private Application? _currentApplication = null;
+    private CommandSet? _currentCommandSet = null;
+    private List<Command>? _loadedCommands = null;
 
     public void Start()
     {
         Log.LogToConsole("Initializing...");
 
-        Completed = new ManualResetEvent(false);
+        if (config.Applications.Count == 0)
+        {
+            Log.LogToConsole("Loaded VoiceCommandConfig contains no configured applications!\nExiting...");
+            return;
+        }
 
-        SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine();
+        _currentApplication = config.Applications?[0];
+        _currentCommandSet = _currentApplication?.CommandSets[0];
+        _loadedCommands = _currentCommandSet?.Commands;
 
-        recognitionEngine.LoadGrammarCompleted += (object? sender, LoadGrammarCompletedEventArgs args) => Console.WriteLine("Grammars loaded.");
-        recognitionEngine.SpeechRecognized += OnSpeechRecognized;
-        recognitionEngine.SpeechRecognitionRejected += OnSpeechRecognitionRejected;
+        Run();
+    }
 
-        AddGrammars(recognitionEngine, LoadedCommands = LoadCommands());
+    private void Run()
+    {
+        if (_loadedCommands == null)
+        {
+            string message = "RecognitionHandler.Run() was called before LoadedCommands was assigned (or RecognitionHandler.LoadCommands() was finished returning a value)!";
+            Log.LogToConsole(message);
+            throw new NullReferenceException(message);
+        }
+
+        using SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-GB"));
+
+        AddGrammarToRecognitionEngine(recognitionEngine, _loadedCommands);
+        SubscribeToRecognitionEvents(recognitionEngine);
+
+        Log.LogToConsole("Ready!");
 
         recognitionEngine.SetInputToDefaultAudioDevice(); // set the input of the speech recognizer to the default audio device
         recognitionEngine.RecognizeAsync(RecognizeMode.Multiple); // recognize speech asynchronous
-        Log.LogToConsole("Ready!");
 
-        Completed.WaitOne(); // wait until speech recognition is completed
-        recognitionEngine.Dispose(); // dispose the speech recognition engine
+        // Wait for operation to complete
+        while (ShouldStopRecognizing == false)
+        {
+            Thread.Sleep(333); // Some value from documentation
+        }
+        Console.WriteLine("Speech recognition completed.");
     }
 
-    private Command[] LoadCommands() //TODO: Replace with JSON parser
+    private void SubscribeToRecognitionEvents(SpeechRecognitionEngine recognitionEngine)
     {
-        // Command[] commands = new Command[]
-        // {
-        //     new Command(
-        //         "test", 
-        //         [
-        //             new InputAction(Scancode.sc_shiftLeft, true),
-        //             new InputAction(Scancode.sc_h, true), new InputAction(Scancode.sc_h, false),
-        //             new InputAction(Scancode.sc_shiftLeft, false),
-        //             new InputAction(Scancode.sc_a, true), new InputAction(Scancode.sc_o, false),
-        //             new InputAction(Scancode.sc_g, true), new InputAction(Scancode.sc_i, false),
-        //             new InputAction(Scancode.sc_o, true), new InputAction(Scancode.sc_i, false),
-        //             new InputAction(Scancode.sc_e, true), new InputAction(Scancode.sc_i, false),
-        //             new InputAction(Scancode.sc_i, true), new InputAction(Scancode.sc_i, false),
-        //             new InputAction(Scancode.sc_e, true), new InputAction(Scancode.sc_i, false),
-        //         ]
-        //     ),       
-
-        //     new Command(
-        //         "power engines", 
-        //         [new InputAction(Scancode.sc_1, true), new InputAction(Scancode.sc_1, false),]
-        //     ),        
-
-        //     new Command(
-        //         "power weapons", 
-        //         [new InputAction(Scancode.sc_2, true), new InputAction(Scancode.sc_2, false),]
-        //     ),        
-
-        //     new Command(
-        //         "power shields", 
-        //         [new InputAction(Scancode.sc_3, true), new InputAction(Scancode.sc_3, false),]
-        //     ),
-
-        //     new Command(
-        //         "maximize engines", 
-        //         [
-        //             new InputAction(Scancode.sc_controlLeft, true),
-        //             new InputAction(Scancode.sc_1, true), new InputAction(Scancode.sc_1, false),
-        //             new InputAction(Scancode.sc_controlLeft, false)
-        //         ]
-        //     ),
-
-        //     new Command(
-        //         "maximize weapons", 
-        //         [
-        //             new InputAction(Scancode.sc_controlLeft, true),
-        //             new InputAction(Scancode.sc_2, true), new InputAction(Scancode.sc_2, false),
-        //             new InputAction(Scancode.sc_controlLeft, false)
-        //         ]
-        //     ),
-
-        //     new Command(
-        //         "maximize shields", 
-        //         [
-        //             new InputAction(Scancode.sc_controlLeft, true),
-        //             new InputAction(Scancode.sc_3, true), new InputAction(Scancode.sc_3, false),
-        //             new InputAction(Scancode.sc_controlLeft, false)
-        //         ]
-        //     ),
-        // };
-
-        // return commands;
-        return [];
+        // recognitionEngine.LoadGrammarCompleted += (object? sender, LoadGrammarCompletedEventArgs args) => Console.WriteLine("Grammars loaded.");
+        recognitionEngine.SpeechDetected += OnSpeechDetected;
+        recognitionEngine.SpeechRecognized += OnSpeechRecognized;
+        recognitionEngine.SpeechRecognitionRejected += OnSpeechRecognitionRejected;
     }
 
-    private void AddGrammars(SpeechRecognitionEngine recognitionEngine, Command[] commands)
+    private void AddGrammarToRecognitionEngine(SpeechRecognitionEngine recognitionEngine, List<Command> commands)
     {
         Log.LogToConsole("Loading commands...");
+
         //new System.Globalization.CultureInfo("en-GB"); gr = new Grammar(grammarBuilder); // For SAPI errors regarding phonetic alphabet selection
-        recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(ShutDownCommand)));
+        GrammarBuilder grammarBuilder = new();
 
-        foreach (var command in commands)
-            recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(command.CommandPhrase)));
+        grammarBuilder.Append(DEFAULT_QUIT_COMMAND);
+        // recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(_quitCommand)));
 
-        Log.LogToConsole($"{commands.Length} command{(commands.Length > 1 ? "s" : "")} loaded.");
+        Parallel.ForEach(commands, command => { recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(command.CommandPhrase))); });
+        // Parallel.ForEach(commands, command => { grammarBuilder.Append(command.CommandPhrase); });
+
+        recognitionEngine.LoadGrammarAsync(new Grammar(grammarBuilder));
+        // foreach (var command in commands)
+        // recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(command.CommandPhrase)));
+
+        Log.LogToConsole(
+            $"{_loadedCommands?.Count ?? 0} Command{(_loadedCommands?.Count > 1 ? "s" : "")} loaded." +
+            $" (Application: \"{_currentApplication?.Name}\" |" +
+            $" Command Set: \"{_currentCommandSet?.Name}\")"
+        );
     }
+
+    private void OnSpeechDetected(object? sender, SpeechDetectedEventArgs args) => Log.LogToConsole("Possible speech detected, processing...");
 
     private void OnSpeechRecognized(object? sender, SpeechRecognizedEventArgs args)
     {
+        Log.LogToConsole("Speech recognized! Processing...");
+
         string result = args.Result.Text;
 
-        if (result == ShutDownCommand)
+        switch (result)
         {
-            ShutDown();
-            return;
-        }
-
-        if (LoadedCommands == null)
-        {
-            Log.LogToConsole("Cannot execute commands when no commands are loaded!", Log.LogType.Warning);
-            return;
-        }
-
-        Command? recognizedCommand = null;
-
-        foreach (var command in LoadedCommands)
-        {
-            if (command.CommandPhrase == result)
-            {
-                recognizedCommand = command;
+            case DEFAULT_QUIT_COMMAND:
+                ShutDown();
+                return;
+            default:
                 break;
-            }
         }
 
-
-
-        if (recognizedCommand != null) // Only use recognizedCommand when a command has actually been recognized. Can't check for null on recognizedCommand because it's a (non-nullable) struct
+        if (_loadedCommands == null)
         {
-            Log.LogToConsole($"Command recognized \"{recognizedCommand.Value.CommandPhrase}\"");
-            Keyboard.SendInputs(recognizedCommand.Value.InputActions);
+            Log.LogToConsole("Cannot execute commands when no commands are loaded!", Log.LogType.Error);
+            return;
         }
+
+        Command? recognizedCommand = _loadedCommands.FirstOrDefault(command => command.CommandPhrase == result);
+        // Command? recognizedCommand = null;
+
+        // foreach (Command command in LoadedCommands)
+        // {
+        //     if (command.CommandPhrase == result)
+        //     {
+        //         recognizedCommand = command;
+        //         break;
+        //     }
+        // }
+
+        if (recognizedCommand == null)
+        {
+            Log.LogToConsole($"Recognized loaded and enabled text {result} but couldn't match it to a command!", Log.LogType.Error);
+            return;
+        }
+
+        Log.LogToConsole($"Command recognized \"{recognizedCommand.Value.CommandPhrase}\"");
+        Keyboard.SendInputs(recognizedCommand.Value.InputActions);
     }
 
     private void ShutDown()
     {
-        Log.LogToConsole("Shutdown command recognized, shutting down...");
-        Thread.Sleep(1000);
-        Completed?.Set();
+        Log.LogToConsole($"Shutdown command recognized, shutting down...");
+        ShouldStopRecognizing = true;
+        // Thread.Sleep(1000);
+        // Completed?.Set();
     }
 
-    private void OnSpeechRecognitionRejected(object? sender, SpeechRecognitionRejectedEventArgs args) => Log.LogToConsole("Still listening...");
-
+    private void OnSpeechRecognitionRejected(object? sender, SpeechRecognitionRejectedEventArgs args) => Log.LogToConsole($"\"{args.Result.Text}\" does not match any loaded and enabled Grammar and was rejected. (Confidence: {args.Result.Confidence})");
 }

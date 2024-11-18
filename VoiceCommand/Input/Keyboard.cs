@@ -5,11 +5,11 @@ namespace VoiceCommand.Input;
 
 internal static class Keyboard
 {
-    public static void SendInputs(InputAction[] inputActions)
+    public static void SendInputs(List<InputAction> inputActions)
     {
-        Input[] inputs = new Input[inputActions.Length];
+        Input[] inputs = new Input[inputActions.Count];
 
-        for (int index = 0; index < inputActions.Length; index++)
+        for (int index = 0; index < inputActions.Count; index++)
         {
             var action = inputActions[index];
             inputs[index] = GetKBInputFromScancode(action.Scancode, action.KeyDown);

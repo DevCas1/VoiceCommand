@@ -27,8 +27,8 @@ internal class Program
         }
         catch (InvalidOperationException)
         {
-            Log.LogToConsole("Config version could not be found! Assuming config file is not present or incorrect and needs to be regenerated.", Log.LogType.Warning);
-            _configurationManager.VoiceCommandConfig.Version = CONFIG_VERSION.ToString();
+            Log.LogToConsole("Config version could not be found! Assuming config file is not present or incorrect and needs to be regenerated.", Log.LogType.Error);
+            return;
         }
 
         _recognitionHandler = new RecognitionHandler(_configurationManager.VoiceCommandConfig);
