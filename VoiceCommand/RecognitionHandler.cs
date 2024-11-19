@@ -1,5 +1,4 @@
 using System.Speech.Recognition;
-using System.Threading;
 using VoiceCommand.Input;
 
 namespace VoiceCommand;
@@ -11,7 +10,6 @@ public class RecognitionHandler(VoiceCommandConfig config)
     public bool ShouldStopRecognizing { get; private set; } = false;
 
     private const string DEFAULT_QUIT_COMMAND = "Close Voice Command";
-    private const string DEFAULT_RELOAD_COMMAND = "Reload all Commands";
 
     private Application? _currentApplication = null;
     private CommandSet? _currentCommandSet = null;
@@ -33,17 +31,6 @@ public class RecognitionHandler(VoiceCommandConfig config)
 
         Run();
     }
-
-    // public bool LoadNewConfig(VoiceCommandConfig newConfig)
-    // {
-    //     if(newConfig.Applications.Count == 0)
-    //     {
-    //         Log.Warning("New VoiceCommandConfig contains no configured applications!\nNew config not loaded.");
-    //         return false;
-    //     }
-
-    //     return true;
-    // }
 
     private void Run()
     {
@@ -71,6 +58,7 @@ public class RecognitionHandler(VoiceCommandConfig config)
         {
             Thread.Sleep(333); // Some value from documentation
         }
+
         Console.WriteLine("Speech recognition completed.");
     }
 
@@ -86,20 +74,14 @@ public class RecognitionHandler(VoiceCommandConfig config)
     {
         Log.Info("Loading commands...");
 
-        GrammarBuilder grammarBuilder = new();
+        List<GrammarBuilder> grammarsToLoad = commands.Select(command => new GrammarBuilder(command.CommandPhrase)).ToList();
+        grammarsToLoad.Append(new GrammarBuilder(DEFAULT_QUIT_COMMAND));
 
-        grammarBuilder.Append(DEFAULT_QUIT_COMMAND);
-        // recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(_quitCommand)));
-
-        Parallel.ForEach(commands, command => { recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(command.CommandPhrase))); });
-        // Parallel.ForEach(commands, command => { grammarBuilder.Append(command.CommandPhrase); }); // DOESN'T WORK
-
-        // recognitionEngine.LoadGrammarAsync(new Grammar(grammarBuilder));
-        // foreach (var command in commands)
-        //     recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(command.CommandPhrase)));
+        foreach(var grammarBuilder in grammarsToLoad)
+            recognitionEngine.LoadGrammar(new Grammar(grammarBuilder));
 
         Log.Info(
-            $"{_loadedCommands?.Count ?? 0} Command{(_loadedCommands?.Count > 1 ? "s" : "")} loaded." +
+            $"{grammarsToLoad.Count} Command{(grammarsToLoad.Count > 1 ? "s" : "")} loaded." +
             $" (Application: \"{_currentApplication?.Name}\" |" +
             $" Command Set: \"{_currentCommandSet?.Name}\")"
         );
@@ -129,16 +111,6 @@ public class RecognitionHandler(VoiceCommandConfig config)
         }
 
         Command? recognizedCommand = _loadedCommands.FirstOrDefault(command => command.CommandPhrase == result);
-        // Command? recognizedCommand = null;
-
-        // foreach (Command command in LoadedCommands)
-        // {
-        //     if (command.CommandPhrase == result)
-        //     {
-        //         recognizedCommand = command;
-        //         break;
-        //     }
-        // }
 
         if (recognizedCommand == null)
         {
