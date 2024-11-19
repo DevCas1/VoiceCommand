@@ -22,10 +22,7 @@ public class ConfigurationManager
             .SetFileLoadExceptionHandler((FileLoadExceptionContext handler) =>
             {
                 // success = false;
-                Log.LogToConsole(
-                    $"An exception occured while loading {configFilePath}!\nException: {handler.Exception}", 
-                    Log.LogType.Error
-                );
+                Log.Error($"An exception occured while loading {configFilePath}!\nException: {handler.Exception}");
             })
             .AddJsonFile(configFilePath, false, false)
             .Build();
@@ -33,7 +30,15 @@ public class ConfigurationManager
         _configuration = config;
         VoiceCommandConfig = new();
 
-        config.Bind(VoiceCommandConfig);
+        try
+        {
+            config.Bind(VoiceCommandConfig, options => { options.ErrorOnUnknownConfiguration = true; });
+        }
+        catch(InvalidOperationException exception)
+        {
+            Log.Error($"Could not bind VoiceCommandConfig! Reason: {exception.InnerException?.Message}\nExiting...");
+            return;
+        }
     }
 
     private void SaveConfig()
