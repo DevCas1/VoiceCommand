@@ -9,19 +9,16 @@ public class ConfigurationManager
 {
     private readonly IConfiguration _configuration;
     private readonly string _filePath;
-    // private readonly Logger<ConfigurationManager> _logger;
 
     public VoiceCommandConfig VoiceCommandConfig { get; private set; }
 
     public ConfigurationManager(string configFilePath)
     {
         _filePath = configFilePath;
-        // _logger = new();
 
         IConfiguration config = new ConfigurationBuilder()
             .SetFileLoadExceptionHandler((FileLoadExceptionContext handler) =>
             {
-                // success = false;
                 Log.Error($"An exception occured while loading {configFilePath}!\nException: {handler.Exception}");
             })
             .AddJsonFile(configFilePath, false, false)
@@ -39,12 +36,5 @@ public class ConfigurationManager
             Log.Error($"Could not bind VoiceCommandConfig! Reason: {exception.InnerException?.Message}\nExiting...");
             return;
         }
-    }
-
-    private void SaveConfig()
-    {
-        JsonSerializerOptions jsonSerializerOptions = new(){
-            WriteIndented = true 
-        };
     }
 }
