@@ -2,7 +2,18 @@
 
 public static class Log
 {
-    public enum LogType { Info, Warning, Error }
+    public enum LogType {
+#if DEBUG
+        Debug,
+#endif
+        Info, 
+        Warning, 
+        Error 
+    }
+
+#if DEBUG
+    public static void Debug(string message) => LogToConsole(message, LogType.Debug);
+#endif
 
     public static void Info(string message) => LogToConsole(message, LogType.Info);
 
