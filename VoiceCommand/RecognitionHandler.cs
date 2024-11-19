@@ -1,10 +1,6 @@
 using System.Speech.Recognition;
 using System.Threading;
 using VoiceCommand.Input;
-using Microsoft.Extensions.Configuration;
-
-using Scancode = VoiceCommand.Input.ScanCode;
-using System.Text.Json;
 
 namespace VoiceCommand;
 
@@ -38,27 +34,29 @@ public class RecognitionHandler(VoiceCommandConfig config)
         Run();
     }
 
-    public bool LoadNewConfig(VoiceCommandConfig newConfig)
-    {
-        if(newConfig.Applications.Count == 0)
-        {
-            Log.Error("");
-            return false;
-        }
+    // public bool LoadNewConfig(VoiceCommandConfig newConfig)
+    // {
+    //     if(newConfig.Applications.Count == 0)
+    //     {
+    //         Log.Warning("New VoiceCommandConfig contains no configured applications!\nNew config not loaded.");
+    //         return false;
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
     private void Run()
     {
         if (_loadedCommands == null)
         {
-            string message = "RecognitionHandler.Run() was called before LoadedCommands was assigned (or RecognitionHandler.LoadCommands() was finished returning a value)!";
+            string message = "RecognitionHandler.Run() was called before LoadedCommands was assigned!";
             Log.Error(message);
             throw new NullReferenceException(message);
         }
 
-        using SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-GB"));
+        // For SAPI errors regarding phonetic alphabet selection
+        // using SpeechRecognitionEngine recognitionEngine = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-GB"));
+        using SpeechRecognitionEngine recognitionEngine = new(new System.Globalization.CultureInfo(config.Language));
 
         AddGrammarToRecognitionEngine(recognitionEngine, _loadedCommands);
         SubscribeToRecognitionEvents(recognitionEngine);
@@ -88,18 +86,17 @@ public class RecognitionHandler(VoiceCommandConfig config)
     {
         Log.Info("Loading commands...");
 
-        //new System.Globalization.CultureInfo("en-GB"); gr = new Grammar(grammarBuilder); // For SAPI errors regarding phonetic alphabet selection
         GrammarBuilder grammarBuilder = new();
 
         grammarBuilder.Append(DEFAULT_QUIT_COMMAND);
         // recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(_quitCommand)));
 
         Parallel.ForEach(commands, command => { recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(command.CommandPhrase))); });
-        // Parallel.ForEach(commands, command => { grammarBuilder.Append(command.CommandPhrase); });
+        // Parallel.ForEach(commands, command => { grammarBuilder.Append(command.CommandPhrase); }); // DOESN'T WORK
 
-        recognitionEngine.LoadGrammarAsync(new Grammar(grammarBuilder));
+        // recognitionEngine.LoadGrammarAsync(new Grammar(grammarBuilder));
         // foreach (var command in commands)
-        // recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(command.CommandPhrase)));
+        //     recognitionEngine.LoadGrammar(new Grammar(new GrammarBuilder(command.CommandPhrase)));
 
         Log.Info(
             $"{_loadedCommands?.Count ?? 0} Command{(_loadedCommands?.Count > 1 ? "s" : "")} loaded." +
