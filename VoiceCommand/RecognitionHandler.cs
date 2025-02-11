@@ -3,7 +3,7 @@ using VoiceCommand.Input;
 
 namespace VoiceCommand;
 
-using Application = Input.Application;
+// using Application = Input.Application;
 
 public class RecognitionHandler(VoiceCommandConfig config)
 {
@@ -11,23 +11,19 @@ public class RecognitionHandler(VoiceCommandConfig config)
 
     private const string DEFAULT_QUIT_COMMAND = "Close Voice Command";
 
-    private Application? _currentApplication = null;
-    private CommandSet? _currentCommandSet = null;
     private List<Command>? _loadedCommands = null;
 
     public void Start()
     {
-        Log.Info("Initializing...");
+        Log.Info("Initializing");
 
-        if (config.Applications.Count == 0)
+        if (config.Commands.Count == 0)
         {
             Log.Error("Loaded VoiceCommandConfig contains no configured applications!\nExiting...");
             return;
         }
 
-        _currentApplication = config.Applications?[0];
-        _currentCommandSet = _currentApplication?.CommandSets[0];
-        _loadedCommands = _currentCommandSet?.Commands;
+        _loadedCommands = config.Commands;
 
         Run();
     }
@@ -81,17 +77,15 @@ public class RecognitionHandler(VoiceCommandConfig config)
             recognitionEngine.LoadGrammar(new Grammar(grammarBuilder));
 
         Log.Info(
-            $"{grammarsToLoad.Count} Command{(grammarsToLoad.Count > 1 ? "s" : "")} loaded." +
-            $" (Application: \"{_currentApplication?.Name}\" |" +
-            $" Command Set: \"{_currentCommandSet?.Name}\")"
+            $"{grammarsToLoad.Count} Command{(grammarsToLoad.Count == 1 ? "" : "s")} loaded."
         );
     }
 
-    private void OnSpeechDetected(object? sender, SpeechDetectedEventArgs args) => Log.Info("Possible speech detected, processing...");
+    private void OnSpeechDetected(object? sender, SpeechDetectedEventArgs args) => Log.Info("Speech detected.");
 
     private void OnSpeechRecognized(object? sender, SpeechRecognizedEventArgs args)
     {
-        Log.Info("Speech recognized! Processing...");
+        Log.Info("Speech recognized!");
 
         string result = args.Result.Text;
 

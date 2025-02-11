@@ -1,74 +1,52 @@
 {
     "Version": "1",
     "Language": "en-GB",
-	"Applications": 
+    "Commands":
     [
         {
-            "Name": "Application 1",
-            "CommandSets": 
+            "Name": "Test 1-1",
+            "CommandPhrase": "Test",
+            "InputActions":
             [
                 {
-                    "Name": "Command Set 1",
-                    "Commands": 
-                    [
-                        {
-                            "Name": "Test 1-1",
-                            "CommandPhrase": "Test",
-                            "InputActions":
-                            [
-                                {
-                                    "ScanCode": "sc_shiftLeft",
-                                    "KeyDown": "true",
-                                    "Duration": "0"
-                                },
-                                {
-                                    "ScanCode": "sc_t",
-                                    "KeyDown": "true",
-                                    "Duration": "0"
-                                },
-                                {
-                                    "ScanCode": "sc_shiftLeft",
-                                    "KeyDown": "false",
-                                    "Duration": "0"
-                                },
-                                {
-                                    "ScanCode": "sc_t",
-                                    "KeyDown": "false",
-                                    "Duration": "0"
-                                },
-                                {
-                                    "ScanCode": "sc_e",
-                                    "KeyDown": "true",
-                                    "Duration": "0"
-                                },
-                                {
-                                    "ScanCode": "sc_e",
-                                    "KeyDown": "false",
-                                    "Duration": "0"
-                                },
-                                {
-                                    "ScanCode": "sc_s",
-                                    "KeyDown": "true",
-                                    "Duration": "0"
-                                },
-                                {
-                                    "ScanCode": "sc_s",
-                                    "KeyDown": "false",
-                                    "Duration": "0"
-                                },
-                                {
-                                    "ScanCode": "sc_t",
-                                    "KeyDown": "true",
-                                    "Duration": "0"
-                                },
-                                {
-                                    "ScanCode": "sc_t",
-                                    "KeyDown": "false",
-                                    "Duration": "0"
-                                }
-                            ]                      
-                        }
-                    ]
+                    "ScanCode": "sc_shiftLeft",
+                    "KeyDown": "true"
+                },
+                {
+                    "ScanCode": "sc_t",
+                    "KeyDown": "true"
+                },
+                {
+                    "ScanCode": "sc_shiftLeft",
+                    "KeyDown": "false"
+                },
+                {
+                    "ScanCode": "sc_t",
+                    "KeyDown": "false"
+                },
+                {
+                    "ScanCode": "sc_e",
+                    "KeyDown": "true"
+                },
+                {
+                    "ScanCode": "sc_e",
+                    "KeyDown": "false"
+                },
+                {
+                    "ScanCode": "sc_s",
+                    "KeyDown": "true"
+                },
+                {
+                    "ScanCode": "sc_s",
+                    "KeyDown": "false"
+                },
+                {
+                    "ScanCode": "sc_t",
+                    "KeyDown": "true"
+                },
+                {
+                    "ScanCode": "sc_t",
+                    "KeyDown": "false"
                 }
             ]
         }
