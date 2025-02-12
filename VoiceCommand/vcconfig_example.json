@@ -10,43 +10,57 @@
             [
                 {
                     "ScanCode": "sc_shiftLeft",
-                    "KeyDown": "true"
+                    "KeyDown": true
                 },
                 {
                     "ScanCode": "sc_t",
-                    "KeyDown": "true"
+                    "KeyDown": true
                 },
                 {
                     "ScanCode": "sc_shiftLeft",
-                    "KeyDown": "false"
+                    "KeyDown": false
                 },
                 {
                     "ScanCode": "sc_t",
-                    "KeyDown": "false"
+                    "KeyDown": false
                 },
                 {
                     "ScanCode": "sc_e",
-                    "KeyDown": "true"
+                    "KeyDown": true
                 },
                 {
                     "ScanCode": "sc_e",
-                    "KeyDown": "false"
+                    "KeyDown": false
                 },
                 {
                     "ScanCode": "sc_s",
-                    "KeyDown": "true"
+                    "KeyDown": true
                 },
                 {
                     "ScanCode": "sc_s",
-                    "KeyDown": "false"
+                    "KeyDown": false
                 },
                 {
                     "ScanCode": "sc_t",
-                    "KeyDown": "true"
+                    "KeyDown": true
                 },
                 {
                     "ScanCode": "sc_t",
-                    "KeyDown": "false"
+                    "KeyDown": false
+                }
+            ]
+        },
+        {
+            "Name": "Reset Power",
+            "CommandPhrase": "Reset Power",
+            "InputActions": [
+                {
+                    "ScanCode": "sc_shiftLeft",
+                    "KeyDown": true
+                },
+                {
+                    "ScanCode": "sc_shiftLeft",
+                    "KeyDown": false
                 }
             ]
         }

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace VoiceCommand.Input;
 
-internal static class Keyboard
+internal static partial class Keyboard
 {
     public static void SendInputs(List<InputAction> inputActions)
     {
@@ -18,7 +18,8 @@ internal static class Keyboard
         SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(Input)));
     }
 
-    private static Input GetKBInputFromScancode(ScanCode scanCode, bool keyDown) => new Input
+    // Usage of shorthand variable names is left like this, I expect SendInput to require these as-is
+    private static Input GetKBInputFromScancode(ScanCode scanCode, bool keyDown) => new ()
     {
         type = (int)InputType.Keyboard,
         u = new InputUnion
@@ -35,11 +36,13 @@ internal static class Keyboard
 
     private static ushort ConvertScanCodeToUInt(ScanCode code) => (ushort)code;
 
-    [DllImport("user32.dll")]
-    private static extern IntPtr GetMessageExtraInfo();
+    // [DllImport("user32.dll")]
+    [LibraryImport("user32.dll")]
+    private static partial IntPtr GetMessageExtraInfo();
 
-    [DllImport("user32.dll", SetLastError = true)]
-    private static extern uint SendInput(uint nInputs, Input[] pInputs, int cbSize);
+    // [DllImport("user32.dll", SetLastError = true)]
+    [LibraryImport("user32.dll", SetLastError = true)]
+    private static partial uint SendInput(uint nInputs, Input[] pInputs, int cbSize);
 
     [StructLayout(LayoutKind.Sequential)]
     private struct KeyboardInput
