@@ -9,7 +9,7 @@ public class RecognitionHandler(VoiceCommandConfig config)
 {
     public bool ShouldStopRecognizing { get; private set; } = false;
 
-    private const string DEFAULT_QUIT_COMMAND = "Close Voice Command";
+    private const string DEFAULT_QUIT_COMMAND = "Exit Voice Command";
 
     private List<Command>? _loadedCommands = null;
 
@@ -89,6 +89,7 @@ public class RecognitionHandler(VoiceCommandConfig config)
 
         string result = args.Result.Text;
 
+        // Switch statement for possible further expansion with built-in commands, like reloading commands from disk
         switch (result)
         {
             case DEFAULT_QUIT_COMMAND:
@@ -112,7 +113,7 @@ public class RecognitionHandler(VoiceCommandConfig config)
             return;
         }
 
-        Log.Info($"Command recognized \"{recognizedCommand.Value.CommandPhrase}\"");
+        Log.Info($"Command recognized \"{recognizedCommand.Value.Name}\" ({recognizedCommand.Value.Name})");
         Keyboard.SendInputs(recognizedCommand.Value.InputActions);
     }
 
